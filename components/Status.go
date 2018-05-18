@@ -1,6 +1,6 @@
 package components
 
-import "invaders2/ecs"
+import "invadersGo/ecs"
 
 const StatusActive = 1
 const StatusExplode = 2

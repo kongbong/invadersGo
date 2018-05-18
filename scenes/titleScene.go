@@ -1,7 +1,7 @@
 package scenes
 
 import (
-	"invaders2/globals"
+	"invadersGo/globals"
 
 	"github.com/google/gxui"
 )

@@ -2,8 +2,8 @@ package scenes
 
 import (
 	"fmt"
-	"invaders2/ecs"
-	"invaders2/systems"
+	"invadersGo/ecs"
+	"invadersGo/systems"
 )
 
 //var background = globals.GetImage("imgs/bg.png")

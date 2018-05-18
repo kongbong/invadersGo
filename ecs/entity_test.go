@@ -1,7 +1,7 @@
 package ecs_test
 
 import (
-	"invaders2/ecs"
+	"invadersGo/ecs"
 	"testing"
 )
 

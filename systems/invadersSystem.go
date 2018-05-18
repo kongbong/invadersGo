@@ -3,9 +3,9 @@ package systems
 import (
 	"fmt"
 	"image"
-	"invaders2/components"
-	"invaders2/ecs"
-	"invaders2/globals"
+	"invadersGo/components"
+	"invadersGo/ecs"
+	"invadersGo/globals"
 	"math/rand"
 )
 

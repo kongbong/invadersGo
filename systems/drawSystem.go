@@ -2,9 +2,9 @@ package systems
 
 import (
 	"image"
-	"invaders2/components"
-	"invaders2/ecs"
-	"invaders2/globals"
+	"invadersGo/components"
+	"invadersGo/ecs"
+	"invadersGo/globals"
 
 	"github.com/disintegration/gift"
 )

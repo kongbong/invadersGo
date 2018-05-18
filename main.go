@@ -1,8 +1,8 @@
 package main
 
 import (
-	"invaders2/globals"
-	"invaders2/scenes"
+	"invadersGo/globals"
+	"invadersGo/scenes"
 	"math/rand"
 	"time"
 
