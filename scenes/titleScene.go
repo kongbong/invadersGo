@@ -1,10 +1,15 @@
 package scenes
 
 import (
+	"invadersGo/ecs"
 	"invadersGo/globals"
 
 	"github.com/google/gxui"
 )
+
+func NewTitleScene() ecs.Scene {
+	return &TitleScene{}
+}
 
 type TitleScene struct {
 }
@@ -25,7 +30,7 @@ func (t *TitleScene) Tick(tickCnt uint64) {
 		})
 	} else if globals.GInputManager.IsKeyUp(gxui.KeyS, gxui.ModNone) {
 		globals.GDispatcher.Dispatch(func() {
-			globals.GSceneManager.ChangeScene(&GameScene{})
+			globals.GSceneManager.ChangeScene(NewGameScene())
 		})
 	}
 }

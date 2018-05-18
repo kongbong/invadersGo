@@ -13,8 +13,6 @@ var aliensStartCol = 100
 var alienSize = 30
 
 // sprites
-var cannonSprite = image.Rect(20, 47, 38, 59)
-var cannonExplode = image.Rect(0, 47, 16, 57)
 var alien1Sprite = image.Rect(0, 0, 20, 14)
 var alien1aSprite = image.Rect(20, 0, 40, 14)
 var alien2Sprite = image.Rect(0, 14, 20, 26)
@@ -22,7 +20,6 @@ var alien2aSprite = image.Rect(20, 14, 40, 26)
 var alien3Sprite = image.Rect(0, 27, 20, 40)
 var alien3aSprite = image.Rect(20, 27, 40, 40)
 var alienExplode = image.Rect(0, 60, 16, 68)
-var beamSprite = image.Rect(20, 60, 22, 65)
 var bombSprite = image.Rect(0, 70, 10, 79)
 
 var alienDirection int = 1
@@ -37,12 +34,11 @@ type invadersSystem struct {
 	world    ecs.World
 }
 
-func NewInvadersSystem() ecs.System {
-	return &invadersSystem{}
+func NewInvadersSystem(sprite image.Image) ecs.System {
+	return &invadersSystem{src: sprite}
 }
 
 func (s *invadersSystem) Init(w ecs.World) {
-	s.src = globals.GetImage("imgs/sprites.png")
 	s.invaders = make(map[uint64]components.Position)
 	s.bombs = make(map[uint64]components.Position)
 	s.world = w

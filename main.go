@@ -19,7 +19,7 @@ func appMain(d gxui.Driver) {
 	rand.Seed(time.Now().UTC().UnixNano())
 	globals.Init(d, Width, Height, Title)
 
-	globals.GSceneManager.ChangeScene(&scenes.TitleScene{})
+	globals.GSceneManager.ChangeScene(scenes.NewTitleScene())
 
 	ticker := time.NewTicker(time.Millisecond * TickInterval)
 	var tickCnt uint64
@@ -27,14 +27,14 @@ func appMain(d gxui.Driver) {
 
 		for _ = range ticker.C {
 			tickCnt++
-			minLoop(tickCnt)
+			mainLoop(tickCnt)
 		}
 	}()
 
 	globals.GWindow.OnClose(ticker.Stop)
 }
 
-func minLoop(tickCnt uint64) {
+func mainLoop(tickCnt uint64) {
 	globals.Tick(tickCnt)
 }
 

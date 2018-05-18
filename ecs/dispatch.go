@@ -1,4 +1,4 @@
-package globals
+package ecs
 
 // run on next frame
 type Dispatcher interface {
@@ -6,12 +6,12 @@ type Dispatcher interface {
 	Tick()
 }
 
-type implDispatcher struct {
-	tasks []func()
-}
-
 func NewDispatcher() Dispatcher {
 	return &implDispatcher{tasks: make([]func(), 0, 10)}
+}
+
+type implDispatcher struct {
+	tasks []func()
 }
 
 func (d *implDispatcher) Dispatch(f func()) {

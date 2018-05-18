@@ -1,14 +1,12 @@
-package globals
+package ecs
 
 type SceneManager interface {
 	Tick(tickCnt uint64)
 	ChangeScene(scene Scene)
 }
 
-type Scene interface {
-	Init()
-	OnDestroy()
-	Tick(tickCnt uint64)
+func NewSceneManager() SceneManager {
+	return &implSceneManager{}
 }
 
 type implSceneManager struct {

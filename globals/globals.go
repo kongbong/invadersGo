@@ -1,13 +1,15 @@
 package globals
 
 import (
+	"invadersGo/ecs"
+
 	"github.com/google/gxui"
 	"github.com/google/gxui/themes/dark"
 )
 
-var GSceneManager SceneManager
-var GInputManager InputManager
-var GDispatcher Dispatcher
+var GSceneManager ecs.SceneManager
+var GInputManager ecs.InputManager
+var GDispatcher ecs.Dispatcher
 var GDriver gxui.Driver
 var GWindow gxui.Window
 var GWindowImg gxui.Image
@@ -23,19 +25,9 @@ func Init(d gxui.Driver, width, height int, title string) {
 	GWindowImg = theme.CreateImage()
 	GWindow.AddChild(GWindowImg)
 
-	GSceneManager = &implSceneManager{}
-
-	i := &implInputManager{}
-	i.downedKey = make(map[gxui.KeyboardKey]bool)
-	i.downedMod = make(map[gxui.KeyboardModifier]bool)
-	i.upEvents = make(map[gxui.KeyboardKey]bool)
-	i.upModEvents = make(map[gxui.KeyboardModifier]bool)
-
-	GWindow.OnKeyDown(i.OnKeyDown)
-	GWindow.OnKeyUp(i.OnKeyUp)
-	GInputManager = i
-
-	GDispatcher = &implDispatcher{tasks: make([]func(), 0, 10)}
+	GSceneManager = ecs.NewSceneManager()
+	GInputManager = ecs.NewInputManager(GWindow)
+	GDispatcher = ecs.NewDispatcher()
 
 	GWindow.OnClose(GDriver.Terminate)
 }
