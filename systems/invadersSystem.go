@@ -1,7 +1,6 @@
 package systems
 
 import (
-	"fmt"
 	"image"
 	"invadersGo/components"
 	"invadersGo/ecs"
@@ -69,7 +68,6 @@ func (s *invadersSystem) Unregister(id uint64, componentType int) {
 	if _, ok := s.invaders[id]; ok {
 		delete(s.invaders, id)
 	} else if _, ok := s.bombs[id]; ok {
-		fmt.Println("Unregister bomb", id)
 		delete(s.bombs, id)
 	}
 }
@@ -79,9 +77,9 @@ func (s *invadersSystem) Tick(tickCnt uint64) {
 	for id, p := range s.bombs {
 		p.SetY(p.Y() + bombSpeed)
 		if p.Y() >= globals.Height {
-			fmt.Println("remove bomb", id, p.Y())
+			reqId := id
 			globals.GDispatcher.Dispatch(func() {
-				s.world.RemoveEntity(id)
+				s.world.RemoveEntity(reqId)
 			})
 		}
 	}
