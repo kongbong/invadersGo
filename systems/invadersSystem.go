@@ -108,7 +108,8 @@ func (s *invadersSystem) dropBomb(p components.Position) {
 	s.world.AddComponent(e.Id(), pos)
 	s.world.AddComponent(e.Id(), components.NewStatus(components.StatusActive))
 	s.world.AddComponent(e.Id(), components.NewSprite(s.src, bombSprite, bombSprite, bombSprite))
-
+	s.world.AddComponent(e.Id(), components.NewCollision(bombSprite))
+	s.world.AddComponent(e.Id(), components.NewBomb())
 	s.bombs[e.Id()] = pos
 }
 
@@ -119,6 +120,8 @@ func (s *invadersSystem) createAlien(x, y int, sprite, alt image.Rectangle, poin
 	s.world.AddComponent(e.Id(), pos)
 	s.world.AddComponent(e.Id(), components.NewStatus(components.StatusActive))
 	s.world.AddComponent(e.Id(), components.NewSprite(s.src, sprite, alt, alienExplode))
+	s.world.AddComponent(e.Id(), components.NewCollision(sprite))
+	s.world.AddComponent(e.Id(), components.NewInvader(points))
 
 	s.invaders[e.Id()] = pos
 }

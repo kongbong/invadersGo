@@ -5,4 +5,9 @@ const (
 	CompTypePosition
 	CompTypeSprite
 	CompTypeStatus
+	CompTypeCollision
+	CompTypeInvader
+	CompTypeBeam
+	CompTypeBomb
+	CompTypeCannon
 )

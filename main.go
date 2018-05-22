@@ -22,20 +22,18 @@ func appMain(d gxui.Driver) {
 	globals.GSceneManager.ChangeScene(scenes.NewTitleScene())
 
 	ticker := time.NewTicker(time.Millisecond * TickInterval)
-	var tickCnt uint64
 	go func() {
 
 		for _ = range ticker.C {
-			tickCnt++
-			mainLoop(tickCnt)
+			mainLoop()
 		}
 	}()
 
 	globals.GWindow.OnClose(ticker.Stop)
 }
 
-func mainLoop(tickCnt uint64) {
-	globals.Tick(tickCnt)
+func mainLoop() {
+	globals.Tick()
 }
 
 func main() {

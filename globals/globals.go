@@ -15,6 +15,8 @@ var GWindow gxui.Window
 var GWindowImg gxui.Image
 var Width int
 var Height int
+var Score int
+var TickCnt uint64
 
 func Init(d gxui.Driver, width, height int, title string) {
 	Width = width
@@ -32,8 +34,9 @@ func Init(d gxui.Driver, width, height int, title string) {
 	GWindow.OnClose(GDriver.Terminate)
 }
 
-func Tick(tickCnt uint64) {
-	GSceneManager.Tick(tickCnt)
+func Tick() {
+	TickCnt++
+	GSceneManager.Tick(TickCnt)
 	GInputManager.Tick()
-	GDispatcher.Tick()
+	GDispatcher.Tick(TickCnt)
 }

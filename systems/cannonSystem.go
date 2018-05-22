@@ -9,30 +9,30 @@ import (
 	"github.com/google/gxui"
 )
 
-type playerSystem struct {
+type cannonSystem struct {
 	src          image.Image
 	world        ecs.World
-	playerPos    components.Position
-	playerStatus components.Status
+	cannonPos    components.Position
+	cannonStatus components.Status
 	beamPos      components.Position
 	beamId       uint64
 }
 
-func NewPlayerSystem(sprite image.Image) ecs.System {
-	return &playerSystem{src: sprite}
+func NewCannonSystem(sprite image.Image) ecs.System {
+	return &cannonSystem{src: sprite}
 }
 
 var cannonSprite = image.Rect(20, 47, 38, 59)
 var cannonExplode = image.Rect(0, 47, 16, 57)
 var beamSprite = image.Rect(20, 60, 22, 65)
 
-func (s *playerSystem) Init(w ecs.World) {
+func (s *cannonSystem) Init(w ecs.World) {
 	s.world = w
-	s.createPlayer(50, 250)
+	s.createCannon(50, 250)
 	s.world.Subscribe(components.CompTypePosition, s)
 }
 
-func (s *playerSystem) Tick(tickCnt uint64) {
+func (s *cannonSystem) Tick(tickCnt uint64) {
 
 	if s.beamPos != nil {
 		s.beamPos.SetY(s.beamPos.Y() - 10)
@@ -41,32 +41,32 @@ func (s *playerSystem) Tick(tickCnt uint64) {
 		}
 	}
 
-	if s.playerStatus.GetStatus() != components.StatusActive {
+	if s.cannonStatus.GetStatus() != components.StatusActive {
 		return
 	}
 
-	if globals.GInputManager.IsKeyDown(gxui.KeyRight, gxui.ModNone) && s.playerPos.X() < globals.Width-(2*alienSize) {
-		s.playerPos.SetX(s.playerPos.X() + 10)
-	} else if globals.GInputManager.IsKeyDown(gxui.KeyLeft, gxui.ModNone) && s.playerPos.X() > alienSize {
-		s.playerPos.SetX(s.playerPos.X() - 10)
+	if globals.GInputManager.IsKeyDown(gxui.KeyRight, gxui.ModNone) && s.cannonPos.X() < globals.Width-(2*alienSize) {
+		s.cannonPos.SetX(s.cannonPos.X() + 10)
+	} else if globals.GInputManager.IsKeyDown(gxui.KeyLeft, gxui.ModNone) && s.cannonPos.X() > alienSize {
+		s.cannonPos.SetX(s.cannonPos.X() - 10)
 	}
 
 	if globals.GInputManager.IsKeyDown(gxui.KeySpace, gxui.ModNone) {
-		s.shootBeam(s.playerPos)
+		s.shootBeam(s.cannonPos)
 	}
 }
 
-func (s *playerSystem) Register(id uint64, c ecs.Component) {
+func (s *cannonSystem) Register(id uint64, c ecs.Component) {
 
 }
 
-func (s *playerSystem) Unregister(id uint64, componentType int) {
+func (s *cannonSystem) Unregister(id uint64, componentType int) {
 	if s.beamId == id {
 		s.beamPos = nil
 	}
 }
 
-func (s *playerSystem) shootBeam(p components.Position) {
+func (s *cannonSystem) shootBeam(p components.Position) {
 	if s.beamPos != nil {
 		return
 	}
@@ -76,20 +76,24 @@ func (s *playerSystem) shootBeam(p components.Position) {
 	s.world.AddComponent(e.Id(), pos)
 	s.world.AddComponent(e.Id(), components.NewStatus(components.StatusActive))
 	s.world.AddComponent(e.Id(), components.NewSprite(s.src, beamSprite, beamSprite, beamSprite))
+	s.world.AddComponent(e.Id(), components.NewCollision(beamSprite))
+	s.world.AddComponent(e.Id(), components.NewBeam())
 
 	s.beamPos = pos
 	s.beamId = e.Id()
 }
 
 // used for creating alien sprites
-func (s *playerSystem) createPlayer(x, y int) {
+func (s *cannonSystem) createCannon(x, y int) {
 	e := s.world.SpawnEntity()
 	pos := components.NewPosition(x, y)
 	s.world.AddComponent(e.Id(), pos)
 	status := components.NewStatus(components.StatusActive)
 	s.world.AddComponent(e.Id(), status)
 	s.world.AddComponent(e.Id(), components.NewSprite(s.src, cannonSprite, cannonSprite, cannonExplode))
+	s.world.AddComponent(e.Id(), components.NewCollision(cannonSprite))
+	s.world.AddComponent(e.Id(), components.NewCannon())
 
-	s.playerPos = pos
-	s.playerStatus = status
+	s.cannonPos = pos
+	s.cannonStatus = status
 }

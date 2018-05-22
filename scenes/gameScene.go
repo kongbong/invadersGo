@@ -21,7 +21,7 @@ func (s *GameScene) Init() {
 	s.world = ecs.NewWorld()
 	s.world.AddSystem(systems.NewDrawSystem())
 	s.world.AddSystem(systems.NewInvadersSystem(sprite))
-	s.world.AddSystem(systems.NewPlayerSystem(sprite))
+	s.world.AddSystem(systems.NewCannonSystem(sprite))
 }
 
 func (t *GameScene) OnDestroy() {

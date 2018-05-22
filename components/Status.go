@@ -2,13 +2,16 @@ package components
 
 import "invadersGo/ecs"
 
-const StatusActive = 1
-const StatusExplode = 2
-const StatusDie = 3
+const (
+	StatusActive = iota
+	StatusExplode
+	StatusDie
+)
 
 type Status interface {
 	ecs.Component
 	GetStatus() int
+	SetStatus(status int)
 }
 
 func NewStatus(status int) Status {
@@ -25,4 +28,8 @@ func (s *implStatus) GetType() int {
 
 func (s *implStatus) GetStatus() int {
 	return s.status
+}
+
+func (s *implStatus) SetStatus(status int) {
+	s.status = status
 }
