@@ -5,21 +5,22 @@ type World interface {
 	GetEntity(id uint64) Entity
 	RemoveEntity(id uint64)
 	AddComponent(id uint64, c Component)
-	RemoveComponent(id uint64, componentType int)
-	GetComponent(id uint64, componentType int) Component
-	ForeachComponents(componentType int, cb func(Component))
+	RemoveComponent(id uint64, compType int)
+	GetComponent(id uint64, compType int) Component
+	ForeachComponents(compType int, cb func(Component))
 	AddSystem(s System)
-	Subscribe(componentType int, s System)
+	Subscribe(compType int, s System)
 	Tick(tickCnt uint64)
 }
 
-func NewWorld() World {
+func NewWorld(d Dispatcher) World {
 	w := &implWorld{}
 	w.entities = make(map[uint64]Entity)
 	w.components = make(map[uint64]map[int]Component)
 	w.componentsForType = make(map[int]map[uint64]Component)
 	w.systems = make([]System, 0)
 	w.subscribers = make(map[int][]System)
+	w.disptcher = d
 	return w
 }
 
@@ -29,6 +30,7 @@ type implWorld struct {
 	componentsForType map[int]map[uint64]Component
 	systems           []System
 	subscribers       map[int][]System
+	disptcher         Dispatcher
 }
 
 func (w *implWorld) SpawnEntity() Entity {
@@ -45,9 +47,11 @@ func (w *implWorld) RemoveEntity(id uint64) {
 	delete(w.entities, id)
 	for t := range w.components[id] {
 		delete(w.componentsForType[t], id)
-		for _, s := range w.subscribers[t] {
-			s.Unregister(id, t)
-		}
+
+		compType := t
+		w.disptcher.Dispatch(func() {
+			w.onRemoveComponent(id, compType)
+		})
 	}
 	delete(w.components, id)
 }
@@ -63,50 +67,65 @@ func (w *implWorld) AddComponent(id uint64, c Component) {
 	}
 	w.componentsForType[t][id] = c
 
-	for _, s := range w.subscribers[t] {
+	w.disptcher.Dispatch(func() {
+		w.onAddComponent(id, c)
+	})
+}
+
+func (w *implWorld) onAddComponent(id uint64, c Component) {
+	for _, s := range w.subscribers[c.GetType()] {
 		s.Register(id, c)
 	}
 }
 
-func (w *implWorld) RemoveComponent(id uint64, componentType int) {
+func (w *implWorld) RemoveComponent(id uint64, compType int) {
 	if w.components[id] == nil {
 		return
 	}
-	delete(w.components[id], componentType)
-	delete(w.componentsForType[componentType], id)
-	for _, s := range w.subscribers[componentType] {
-		s.Unregister(id, componentType)
+	delete(w.components[id], compType)
+	delete(w.componentsForType[compType], id)
+
+	w.disptcher.Dispatch(func() {
+		w.onRemoveComponent(id, compType)
+	})
+}
+
+func (w *implWorld) onRemoveComponent(id uint64, compType int) {
+	for _, s := range w.subscribers[compType] {
+		s.Unregister(id, compType)
 	}
 }
 
-func (w *implWorld) GetComponent(id uint64, componentType int) Component {
+func (w *implWorld) GetComponent(id uint64, compType int) Component {
 	if w.components[id] == nil {
 		return nil
 	}
 
-	return w.components[id][componentType]
+	return w.components[id][compType]
 }
 
-func (w *implWorld) ForeachComponents(componentType int, cb func(Component)) {
-	if w.componentsForType[componentType] == nil {
+func (w *implWorld) ForeachComponents(compType int, cb func(Component)) {
+	if w.componentsForType[compType] == nil {
 		return
 	}
 
-	for _, c := range w.componentsForType[componentType] {
+	for _, c := range w.componentsForType[compType] {
 		cb(c)
 	}
 }
 
 func (w *implWorld) AddSystem(s System) {
 	w.systems = append(w.systems, s)
-	s.Init(w)
+	w.disptcher.Dispatch(func() {
+		s.Init(w)
+	})
 }
 
-func (w *implWorld) Subscribe(componentType int, s System) {
-	if w.subscribers[componentType] == nil {
-		w.subscribers[componentType] = make([]System, 0, 1)
+func (w *implWorld) Subscribe(compType int, s System) {
+	if w.subscribers[compType] == nil {
+		w.subscribers[compType] = make([]System, 0, 1)
 	}
-	w.subscribers[componentType] = append(w.subscribers[componentType], s)
+	w.subscribers[compType] = append(w.subscribers[compType], s)
 }
 
 func (w *implWorld) Tick(tickCnt uint64) {

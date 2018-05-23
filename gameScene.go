@@ -1,10 +1,8 @@
-package scenes
+package main
 
 import (
 	"fmt"
 	"invadersGo/ecs"
-	"invadersGo/globals"
-	"invadersGo/systems"
 )
 
 func NewGameScene() ecs.Scene {
@@ -17,11 +15,12 @@ type GameScene struct {
 
 func (s *GameScene) Init() {
 	fmt.Println("GameScene Init")
-	sprite := globals.GetImage("imgs/sprites.png")
-	s.world = ecs.NewWorld()
-	s.world.AddSystem(systems.NewDrawSystem())
-	s.world.AddSystem(systems.NewInvadersSystem(sprite))
-	s.world.AddSystem(systems.NewCannonSystem(sprite))
+	sprite := GetImage("imgs/sprites.png")
+	s.world = ecs.NewWorld(dispatcher)
+	s.world.AddSystem(NewDrawSystem())
+	s.world.AddSystem(NewGameManager())
+	s.world.AddSystem(NewInvadersSystem(sprite))
+	s.world.AddSystem(NewCannonSystem(sprite))
 }
 
 func (t *GameScene) OnDestroy() {

@@ -8,6 +8,7 @@ type InputManager interface {
 	Tick()
 	IsKeyDown(key gxui.KeyboardKey, mod gxui.KeyboardModifier) bool
 	IsKeyUp(key gxui.KeyboardKey, mod gxui.KeyboardModifier) bool
+	PressedAnyKey() bool
 }
 
 func NewInputManager(window gxui.Window) InputManager {
@@ -52,6 +53,15 @@ func (i *implInputManager) IsKeyDown(key gxui.KeyboardKey, mod gxui.KeyboardModi
 
 func (i *implInputManager) IsKeyUp(key gxui.KeyboardKey, mod gxui.KeyboardModifier) bool {
 	return i.upEvents[key] > 0 && i.upModEvents[mod] > 0
+}
+
+func (i *implInputManager) PressedAnyKey() bool {
+	for _, v := range i.downedKey {
+		if v > 0 {
+			return true
+		}
+	}
+	return false
 }
 
 func (i *implInputManager) OnKeyDown(e gxui.KeyboardEvent) {

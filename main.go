@@ -1,8 +1,6 @@
 package main
 
 import (
-	"invadersGo/globals"
-	"invadersGo/scenes"
 	"math/rand"
 	"time"
 
@@ -17,9 +15,9 @@ const TickInterval = 500
 
 func appMain(d gxui.Driver) {
 	rand.Seed(time.Now().UTC().UnixNano())
-	globals.Init(d, Width, Height, Title)
+	InitWindow(d, Width, Height, Title)
 
-	globals.GSceneManager.ChangeScene(scenes.NewTitleScene())
+	sceneManager.ChangeScene(NewTitleScene())
 
 	ticker := time.NewTicker(time.Millisecond * TickInterval)
 	go func() {
@@ -29,11 +27,11 @@ func appMain(d gxui.Driver) {
 		}
 	}()
 
-	globals.GWindow.OnClose(ticker.Stop)
+	window.OnClose(ticker.Stop)
 }
 
 func mainLoop() {
-	globals.Tick()
+	Tick()
 }
 
 func main() {

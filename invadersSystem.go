@@ -1,10 +1,9 @@
-package systems
+package main
 
 import (
 	"image"
 	"invadersGo/components"
 	"invadersGo/ecs"
-	"invadersGo/globals"
 	"math/rand"
 )
 
@@ -72,9 +71,9 @@ func (s *invadersSystem) Tick(tickCnt uint64) {
 
 	for id, p := range s.bombs {
 		p.SetY(p.Y() + bombSpeed)
-		if p.Y() >= globals.Height {
+		if p.Y() >= Height {
 			reqId := id
-			globals.GDispatcher.Dispatch(func() {
+			dispatcher.Dispatch(func() {
 				s.world.RemoveEntity(reqId)
 			})
 		}
@@ -91,7 +90,7 @@ func (s *invadersSystem) Tick(tickCnt uint64) {
 
 	for _, p := range s.invaders {
 		p.SetX(p.X() + 5*alienDirection)
-		if p.X() < alienSize || p.X() > globals.Width-(2*alienSize) {
+		if p.X() < alienSize || p.X() > Width-(2*alienSize) {
 			collidesWall = true
 		}
 

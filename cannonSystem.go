@@ -1,10 +1,9 @@
-package systems
+package main
 
 import (
 	"image"
 	"invadersGo/components"
 	"invadersGo/ecs"
-	"invadersGo/globals"
 
 	"github.com/google/gxui"
 )
@@ -45,13 +44,13 @@ func (s *cannonSystem) Tick(tickCnt uint64) {
 		return
 	}
 
-	if globals.GInputManager.IsKeyDown(gxui.KeyRight, gxui.ModNone) && s.cannonPos.X() < globals.Width-(2*alienSize) {
+	if inputManager.IsKeyDown(gxui.KeyRight, gxui.ModNone) && s.cannonPos.X() < Width-(2*alienSize) {
 		s.cannonPos.SetX(s.cannonPos.X() + 10)
-	} else if globals.GInputManager.IsKeyDown(gxui.KeyLeft, gxui.ModNone) && s.cannonPos.X() > alienSize {
+	} else if inputManager.IsKeyDown(gxui.KeyLeft, gxui.ModNone) && s.cannonPos.X() > alienSize {
 		s.cannonPos.SetX(s.cannonPos.X() - 10)
 	}
 
-	if globals.GInputManager.IsKeyDown(gxui.KeySpace, gxui.ModNone) {
+	if inputManager.IsKeyDown(gxui.KeySpace, gxui.ModNone) {
 		s.shootBeam(s.cannonPos)
 	}
 }

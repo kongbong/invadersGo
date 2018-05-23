@@ -1,11 +1,10 @@
-package systems
+package main
 
 import (
+	"fmt"
 	"image"
 	"invadersGo/components"
 	"invadersGo/ecs"
-	"invadersGo/globals"
-	"invadersGo/scenes"
 )
 
 type actor struct {
@@ -36,11 +35,12 @@ func NewGameManager() ecs.System {
 	return gm
 }
 
-func NewInvader(a *actor, points int) *invader {
+func NewInvaderActor(a *actor, points int) *invader {
 	return &invader{actor{a.position, a.status, a.collision}, points}
 }
 
 func (gm *gameManager) Init(w ecs.World) {
+	fmt.Println("gameManager Init")
 	gm.world = w
 	w.Subscribe(components.CompTypeInvader, gm)
 	w.Subscribe(components.CompTypeBeam, gm)
@@ -50,13 +50,18 @@ func (gm *gameManager) Init(w ecs.World) {
 
 func (gm *gameManager) Tick(tickCnt uint64) {
 
+	if gm.cannon == nil || gm.cannon.status.GetStatus() != components.StatusActive {
+		return
+	}
+
 	for id, bomb := range gm.bombs {
 		if checkCollision(bomb.position, bomb.collision, gm.cannon.position, gm.cannon.collision) {
 			// explode
+			fmt.Println("explode cannon")
 			gm.cannon.status.SetStatus(components.StatusExplode)
 			gm.world.RemoveEntity(id)
 
-			globals.GDispatcher.Dispatchn(globals.TickCnt+2, func() {
+			dispatcher.Dispatchn(TickCnt+2, func() {
 				gm.world.RemoveEntity(gm.cannonId)
 			})
 			break
@@ -68,12 +73,13 @@ Loop:
 		for id2, invader := range gm.invaders {
 			if invader.status.GetStatus() == components.StatusActive && checkCollision(beam.position, beam.collision, invader.position, invader.collision) {
 				// explode
+				fmt.Println("explode invader")
 				invader.status.SetStatus(components.StatusExplode)
 				gm.world.RemoveEntity(id)
-				globals.Score += invader.points
+				Score += invader.points
 
 				invaderId := id2
-				globals.GDispatcher.Dispatchn(globals.TickCnt+2, func() {
+				dispatcher.Dispatchn(TickCnt+2, func() {
 					gm.world.RemoveEntity(invaderId)
 				})
 				break Loop
@@ -94,19 +100,20 @@ func checkCollision(p1 components.Position, c1 components.Collision, p2 componen
 
 func (gm *gameManager) Register(id uint64, c ecs.Component) {
 	a := &actor{}
-	a.collision = c.(components.Collision)
+	a.collision = gm.world.GetComponent(id, components.CompTypeCollision).(components.Collision)
 	a.status = gm.world.GetComponent(id, components.CompTypeStatus).(components.Status)
 	a.position = gm.world.GetComponent(id, components.CompTypePosition).(components.Position)
 
 	switch c.GetType() {
 	case components.CompTypeInvader:
 		i := c.(components.Invader)
-		gm.invaders[id] = NewInvader(a, i.GetScore())
+		gm.invaders[id] = NewInvaderActor(a, i.GetScore())
 	case components.CompTypeBeam:
 		gm.beams[id] = a
 	case components.CompTypeBomb:
 		gm.bombs[id] = a
 	case components.CompTypeCannon:
+		fmt.Printf("register cannon %P\n", c)
 		gm.cannon = a
 		gm.cannonId = id
 	}
@@ -116,6 +123,12 @@ func (gm *gameManager) Unregister(id uint64, componentType int) {
 	switch componentType {
 	case components.CompTypeInvader:
 		delete(gm.invaders, id)
+		if len(gm.invaders) == 0 {
+			dispatcher.Dispatchn(TickCnt+2, func() {
+				// change to result
+				sceneManager.ChangeScene(NewResultScene())
+			})
+		}
 	case components.CompTypeBeam:
 		delete(gm.beams, id)
 	case components.CompTypeBomb:
@@ -123,9 +136,9 @@ func (gm *gameManager) Unregister(id uint64, componentType int) {
 	case components.CompTypeCannon:
 		gm.cannon = nil
 		gm.cannonId = 0
-		globals.GDispatcher.Dispatch(func() {
+		dispatcher.Dispatchn(TickCnt+2, func() {
 			// change to result
-			globals.GSceneManager.ChangeScene(scenes.NewResultScene())
+			sceneManager.ChangeScene(NewResultScene())
 		})
 	}
 }

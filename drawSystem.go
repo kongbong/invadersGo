@@ -1,10 +1,11 @@
-package systems
+package main
 
 import (
+	"fmt"
 	"image"
+	"image/color"
 	"invadersGo/components"
 	"invadersGo/ecs"
-	"invadersGo/globals"
 
 	"github.com/disintegration/gift"
 )
@@ -27,12 +28,12 @@ func NewDrawSystem() ecs.System {
 
 func (s *drawSystem) Init(w ecs.World) {
 	s.world = w
-	s.background = globals.GetImage("imgs/bg.png")
+	s.background = GetImage("imgs/bg.png")
 	w.Subscribe(components.CompTypeSprite, s)
 }
 
 func (s *drawSystem) Tick(tickCnt uint64) {
-	dst := image.NewRGBA(image.Rect(0, 0, globals.Width, globals.Height))
+	dst := image.NewRGBA(image.Rect(0, 0, Width, Height))
 	gift.New().Draw(dst, s.background)
 
 	for _, d := range s.drawObjs {
@@ -47,7 +48,10 @@ func (s *drawSystem) Tick(tickCnt uint64) {
 		}
 	}
 
-	globals.PrintImage(dst)
+	str := fmt.Sprintf("SCORE: %d", Score)
+	addLabel(dst, 20, 20, str, color.RGBA{255, 255, 255, 255})
+
+	PrintImage(dst)
 }
 
 func (s *drawSystem) Register(id uint64, c ecs.Component) {

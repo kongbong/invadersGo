@@ -1,6 +1,9 @@
 package ecs
 
-import "container/heap"
+import (
+	"container/heap"
+	"time"
+)
 
 // run on next frame
 type Dispatcher interface {
@@ -23,12 +26,16 @@ type implDispatcher struct {
 type task struct {
 	job  func()
 	tick uint64
+	time time.Time
 }
 
 type pqTasks []*task
 
 func (pq pqTasks) Len() int { return len(pq) }
 func (pq pqTasks) Less(i, j int) bool {
+	if pq[i].tick == pq[j].tick {
+		return pq[i].time.Before(pq[j].time)
+	}
 	return pq[i].tick < pq[j].tick
 }
 func (pq pqTasks) Swap(i, j int) {
@@ -49,11 +56,11 @@ func (pq pqTasks) Top() *task {
 }
 
 func (d *implDispatcher) Dispatch(f func()) {
-	heap.Push(&d.tasks, &task{job: f})
+	heap.Push(&d.tasks, &task{job: f, time: time.Now()})
 }
 
 func (d *implDispatcher) Dispatchn(n uint64, f func()) {
-	heap.Push(&d.tasks, &task{job: f, tick: n})
+	heap.Push(&d.tasks, &task{job: f, tick: n, time: time.Now()})
 }
 
 func (d *implDispatcher) Tick(tickCnt uint64) {
@@ -61,5 +68,6 @@ func (d *implDispatcher) Tick(tickCnt uint64) {
 		if d.tasks.Top().tick > tickCnt {
 			break
 		}
+		heap.Pop(&d.tasks).(*task).job()
 	}
 }
