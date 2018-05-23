@@ -1,6 +1,6 @@
 package components
 
-import "invadersGo/ecs"
+import "github.com/kongbong/invadersGo/ecs"
 
 type Cannon interface {
 	ecs.Component

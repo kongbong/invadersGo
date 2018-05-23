@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	"invadersGo/components"
-	"invadersGo/ecs"
+
+	"github.com/kongbong/invadersGo/components"
+	"github.com/kongbong/invadersGo/ecs"
 
 	"github.com/disintegration/gift"
 )

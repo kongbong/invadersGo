@@ -2,9 +2,10 @@ package main
 
 import (
 	"image"
-	"invadersGo/components"
-	"invadersGo/ecs"
 	"math/rand"
+
+	"github.com/kongbong/invadersGo/components"
+	"github.com/kongbong/invadersGo/ecs"
 )
 
 var aliensPerRow = 8

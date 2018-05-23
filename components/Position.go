@@ -1,7 +1,7 @@
 package components
 
 import (
-	"invadersGo/ecs"
+	"github.com/kongbong/invadersGo/ecs"
 )
 
 type Position interface {

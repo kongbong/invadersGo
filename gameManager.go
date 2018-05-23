@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"image"
-	"invadersGo/components"
-	"invadersGo/ecs"
+
+	"github.com/kongbong/invadersGo/components"
+	"github.com/kongbong/invadersGo/ecs"
 )
 
 type actor struct {

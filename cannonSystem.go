@@ -2,8 +2,9 @@ package main
 
 import (
 	"image"
-	"invadersGo/components"
-	"invadersGo/ecs"
+
+	"github.com/kongbong/invadersGo/components"
+	"github.com/kongbong/invadersGo/ecs"
 
 	"github.com/google/gxui"
 )

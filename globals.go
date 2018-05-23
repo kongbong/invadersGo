@@ -1,7 +1,7 @@
 package main
 
 import (
-	"invadersGo/ecs"
+	"github.com/kongbong/invadersGo/ecs"
 
 	"github.com/google/gxui"
 	"github.com/google/gxui/themes/dark"

@@ -2,7 +2,8 @@ package components
 
 import (
 	"image"
-	"invadersGo/ecs"
+
+	"github.com/kongbong/invadersGo/ecs"
 
 	"github.com/disintegration/gift"
 )

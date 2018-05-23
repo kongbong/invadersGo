@@ -1,8 +1,9 @@
 package ecs_test
 
 import (
-	"invadersGo/ecs"
 	"testing"
+
+	"github.com/kongbong/invadersGo/ecs"
 )
 
 const TestComponentType = 1

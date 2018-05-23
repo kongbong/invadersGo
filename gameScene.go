@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"invadersGo/ecs"
+
+	"github.com/kongbong/invadersGo/ecs"
 )
 
 func NewGameScene() ecs.Scene {
